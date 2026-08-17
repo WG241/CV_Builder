@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: theme("colors.canvas");
+  color: theme("colors.ink.DEFAULT");
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-md px-5 py-2.5 text-sm font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn bg-brand text-white hover:bg-ink shadow-sm;
+  }
+  .btn-secondary {
+    @apply btn border border-line bg-white text-ink hover:bg-brand-light;
+  }
+  .btn-ghost {
+    @apply btn text-ink-soft hover:bg-brand-light;
+  }
+  .field-label {
+    @apply block text-sm font-medium text-ink-soft mb-1.5;
+  }
+  .field-input {
+    @apply block w-full rounded-md border border-line bg-white px-3 py-2 text-sm text-ink shadow-sm placeholder:text-ink-muted/60 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand;
+  }
+  .field-hint {
+    @apply mt-1 text-xs text-ink-muted;
+  }
+  .card {
+    @apply rounded-xl border border-line bg-white shadow-card;
+  }
+  .section-chip {
+    @apply inline-flex items-center rounded-full bg-brand-light px-3 py-1 text-xs font-semibold uppercase tracking-wide text-brand;
+  }
+}
+
+/* Print styles so the on-screen preview is itself printable as a fallback. */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: white;
+  }
+}
