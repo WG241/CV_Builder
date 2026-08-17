@@ -11,8 +11,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.117.1",
     "docx": "^9.0.2",
+    "openai": "^4.104.0",
     "next": "^15.5.23",
     "pdfmake": "^0.2.12",
     "react": "19.0.0",

@@ -6,7 +6,7 @@ no login, no accounts, no database**. Enter your career information, let AI orga
 strengthen and translate it (without fabricating anything), review and edit, then download
 a professional **PDF** and an editable **Word** document.
 
-Built with Next.js (App Router), TypeScript, React, Tailwind CSS and the Anthropic API.
+Built with Next.js (App Router), TypeScript, React, Tailwind CSS and the OpenAI API.
 Designed for deployment on Vercel.
 
 ---
@@ -16,7 +16,7 @@ Designed for deployment on Vercel.
 ```bash
 npm install
 cp .env.example .env.local        # then edit .env.local and add your key
-# ANTHROPIC_API_KEY=sk-ant-...
+# OPENAI_API_KEY=sk-...
 npm run dev                       # http://localhost:3000
 ```
 
@@ -46,9 +46,9 @@ npx tsx tests/validate-profiles.mts   # validate the 10 fictional QA profiles
 
 | Variable | Required | Purpose |
 | --- | --- | --- |
-| `ANTHROPIC_API_KEY` | **Yes** | Server-side only. Read exclusively inside `app/api/*`. Never exposed to the browser, never committed to Git. |
-| `ANTHROPIC_MODEL_HEAVY` | No | Override the drafting / quality-review model. Default `claude-opus-5`. |
-| `ANTHROPIC_MODEL_LIGHT` | No | Override the analysis / audit / edit model. Default `claude-sonnet-5`. |
+| `OPENAI_API_KEY` | **Yes** | Server-side only. Read exclusively inside `app/api/*`. Never exposed to the browser, never committed to Git. |
+| `OPENAI_MODEL_HEAVY` | No | Override the drafting / quality-review model. Default `gpt-4o`. |
+| `OPENAI_MODEL_LIGHT` | No | Override the analysis / audit / edit model. Default `gpt-4o-mini`. |
 | `RATE_LIMIT_GENERATIONS_PER_HOUR` | No | Per-IP full-generation cap. Default `8`. |
 | `RATE_LIMIT_REQUESTS_PER_MINUTE` | No | Per-IP request cap across AI endpoints. Default `20`. |
 
@@ -71,14 +71,14 @@ Landing (/)  →  Wizard (/create, 6 steps)  →  Review/Edit (/review)  →  Do
     clarifications and *confirm-first* public-source suggestions — never auto-inserted.
   - `generate` — draft → factual audit → quality review → validated structured CV object.
   - `edit` — targeted, **fact-preserving** rewrites (improve / concise / executive / simplify / regenerate).
-- **Staged AI pipeline** (`lib/ai/*`): discrete structured Claude calls, hybrid model strategy,
+- **Staged AI pipeline** (`lib/ai/*`): discrete structured OpenAI calls, hybrid model strategy,
   strict JSON output normalised into a type-safe `StructuredCV` that drives preview, editing, PDF
   and DOCX from one source of truth.
 - **Exports** (`lib/export/*`): PDF via `pdfmake` (real selectable text, A4, ATS-friendly) and
   DOCX via `docx` (genuinely editable). Both mirror the on-screen template.
 - **Security** (`lib/schemas.ts`, `lib/sanitize.ts`, `lib/ratelimit.ts`): Zod validation, max
   input sizes, request sanitisation, per-IP rate limiting, workflow allow-list (the endpoints
-  accept only the defined CV workflows — not a general Claude proxy), and security headers.
+  accept only the defined CV workflows — not a general LLM proxy), and security headers.
 
 ---
 
@@ -86,7 +86,7 @@ Landing (/)  →  Wizard (/create, 6 steps)  →  Review/Edit (/review)  →  Do
 
 1. Push this repository to GitHub.
 2. In Vercel, **Add New… → Project** and import the GitHub repo (framework auto-detected as Next.js).
-3. Add the `ANTHROPIC_API_KEY` environment variable (and any optional overrides).
+3. Add the `OPENAI_API_KEY` environment variable (and any optional overrides).
 4. Deploy a **Preview** first. Test the full fictional journey (landing → wizard → generate →
    edit → PDF → DOCX) and inspect the build & runtime logs.
 5. Promote to **Production** only after the preview passes.
@@ -95,9 +95,9 @@ Landing (/)  →  Wizard (/create, 6 steps)  →  Review/Edit (/review)  →  Do
 
 The `generate` route runs several sequential model calls and sets `maxDuration = 300`.
 On **Vercel Hobby**, serverless functions are capped at **60 seconds**, which can be tight for
-long careers using the Opus drafting model. Options:
+long careers using the `gpt-4o` drafting model. Options:
 - Use a **Vercel Pro** plan (recommended) so the 300s limit applies; or
-- Set `ANTHROPIC_MODEL_HEAVY=claude-sonnet-5` to run the whole pipeline on Sonnet, which is
+- Set `OPENAI_MODEL_HEAVY=gpt-4o-mini` to run the whole pipeline on the lighter model, which is
   faster and comfortably fits within 60s (with a modest quality trade-off).
 
 ---
@@ -107,7 +107,7 @@ long careers using the Opus drafting model. Options:
 1. Never fabricate career information.
 2. Never silently insert researched individual-specific facts — the user confirms each one.
 3. Never encourage entry of classified / restricted / sensitive information.
-4. Never expose the Anthropic API key (server-side only).
+4. Never expose the OpenAI API key (server-side only).
 5. No database or accounts.
 6. Substance over decoration.
 7. Output suitable for genuine professional use.
@@ -122,7 +122,7 @@ long careers using the Opus drafting model. Options:
 - Workforce keeps **no** user accounts and **no** database of generated CVs.
 - While you work, a draft is stored in your browser's `localStorage` on your device only.
 - To generate/refine the CV, submitted information is sent **temporarily** to a third-party AI
-  provider (Anthropic) for processing. The app does not claim data never leaves your device.
+  provider (OpenAI) for processing. The app does not claim data never leaves your device.
 - Server logs record only error messages, never full CV content.
 
 ---
@@ -134,7 +134,7 @@ long careers using the Opus drafting model. Options:
 - `tests/validate-profiles.mts` — validates every profile against the production schema.
 - `tests/qa.mjs` — Playwright browser QA of the non-AI journey (landing, wizard, preview, edit,
   PDF & DOCX download, mobile), with screenshots to `tests/output/`.
-- **Live AI quality** should be verified after deployment (once `ANTHROPIC_API_KEY` is set) by
+- **Live AI quality** should be verified after deployment (once `OPENAI_API_KEY` is set) by
   running the fictional profiles through the app and inspecting the generated CVs.
 
 ---
