@@ -5,7 +5,6 @@
 
 // Remove ASCII control characters except tab (\x09), newline (\x0A) and
 // carriage-return (\x0D).
-// eslint-disable-next-line no-control-regex
 const CONTROL_CHARS = /[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g;
 
 export function cleanText(input: unknown, max = 6_000): string {
